@@ -1,10 +1,13 @@
 package com.ishara.product_service.controller;
 
 import com.ishara.product_service.dto.ProductRequest;
+import com.ishara.product_service.dto.ProductResponse;
 import com.ishara.product_service.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -20,8 +23,7 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public void getAllProduct() {
-
-
+    public List<ProductResponse> getAllProduct() {
+        return productService.getAllProducts();
     }
 }

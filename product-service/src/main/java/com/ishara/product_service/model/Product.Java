@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Document(value = "product")
 @Builder
-class Product {
+public class Product {
     @Id
     private String id;
     private String name;

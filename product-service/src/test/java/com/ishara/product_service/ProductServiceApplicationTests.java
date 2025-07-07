@@ -2,6 +2,7 @@ package com.ishara.product_service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ishara.product_service.dto.ProductRequest;
+import com.ishara.product_service.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +34,9 @@ class ProductServiceApplicationTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
         dynamicPropertyRegistry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
@@ -46,13 +50,14 @@ class ProductServiceApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestString))
                 .andExpect(status().isCreated());
+        assert(productRepository.findAll().size() == 1);
     }
 
     private ProductRequest getProductRequest() {
         return ProductRequest.builder()
-                .name("iphone 13")
-                .description("iphone 13")
-                .price(BigDecimal.valueOf(1200))
+                .name("Samsung A55")
+                .description("The best phone in the world")
+                .price(BigDecimal.valueOf(93000))
                 .build();
     }
 

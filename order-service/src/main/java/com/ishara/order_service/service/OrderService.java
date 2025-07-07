@@ -4,13 +4,18 @@ import com.ishara.order_service.dto.OrderLineItemDto;
 import com.ishara.order_service.dto.OrderRequest;
 import com.ishara.order_service.model.Order;
 import com.ishara.order_service.model.OrderLineItems;
+import com.ishara.order_service.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
+
+    private final OrderRepository orderRepository;
 
     public void placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
@@ -22,6 +27,7 @@ public class OrderService {
                 .toList();
 
         order.setOrderLineItemsList(orderLineItems);
+        orderRepository.save(order);
     }
 
     private OrderLineItems mapToDto(OrderLineItemDto orderLineItemDto) {

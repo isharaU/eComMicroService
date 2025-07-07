@@ -50,7 +50,7 @@ class ProductServiceApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productRequestString))
                 .andExpect(status().isCreated());
-        assert(productRepository.findAll().size() == 1);
+        assert (productRepository.findAll().size() == 1);
     }
 
     private ProductRequest getProductRequest() {
@@ -61,4 +61,9 @@ class ProductServiceApplicationTests {
                 .build();
     }
 
+    @Test
+    void testGetProduct() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/products"))
+                .andExpect(status().isOk());
+    }
 }

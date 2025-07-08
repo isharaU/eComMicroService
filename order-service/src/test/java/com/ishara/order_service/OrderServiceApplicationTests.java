@@ -33,7 +33,7 @@ class OrderServiceApplicationTests {
     static MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("order_service")
             .withUsername("root")
-            .withPassword("ishara123");
+            .withPassword("root");
 
     @Autowired
     private MockMvc mockMvc;

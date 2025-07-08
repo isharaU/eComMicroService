@@ -14,7 +14,7 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @GetMapping("{sku-code}")
+    @GetMapping("/{sku-code}")
     public Boolean isInStock(@PathVariable("sku-code") String skuCode) {
         return inventoryService.isInStock(skuCode);
     }

@@ -17,4 +17,9 @@ buildNumber.properties
 .classpath
 
 *.iml
-*.xml
+vcs.xml
+workspace.xml
+
+*.json
+
+.vscode/

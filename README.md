@@ -46,7 +46,7 @@ The application simulates a simple online shop comprising multiple microservices
 
 ## 🔧 Tech Stack
 
-* **Java 17**, **Spring Boot 2.6.4**, **Spring Cloud**
+* **Java 21**, **Spring Boot 2.6.4**, **Spring Cloud**
 * **MongoDB**, **MySQL**
 * **RabbitMQ**, **Apache Kafka**
 * **Keycloak**, **Vault**, **Zipkin**

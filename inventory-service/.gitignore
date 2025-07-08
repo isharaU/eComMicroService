@@ -1,0 +1,59 @@
+# === Java ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === Maven ===
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# === Gradle ===
+/build/
+/.gradle
+!gradle/wrapper/gradle-wrapper.jar
+
+# === IntelliJ IDEA ===
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# === VS Code ===
+.vscode/
+
+# === Logs and test output ===
+*.log
+*.tmp
+*.swp
+*.bak
+*.orig
+*.rej
+
+# === OS-generated ===
+.DS_Store
+Thumbs.db
+
+# === Environment ===
+.env
+.env.*
+
+# === Testcontainers (optional Docker junk) ===
+/testcontainers.properties
+
+# === Spring Boot specific ===
+/bin/
+/.mvn/
+.spring-boot-devtools.properties
+
+# === Compiled files ===
+/*.class
+*.exec
+
+# === Other ===
+/node_modules/
+package-lock.json
+npm-debug.log
+yarn-debug.log
+yarn-error.log

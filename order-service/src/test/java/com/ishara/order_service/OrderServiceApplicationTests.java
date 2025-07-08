@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrderServiceApplicationTests {
 
     @Container
+    @SuppressWarnings("resource")
     static MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("order_service")
             .withUsername("root")

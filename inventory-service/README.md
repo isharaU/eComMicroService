@@ -1,24 +1,27 @@
-# Smart Email Assistant Backend
+# Inventory Service
 
-A Spring Boot backend service to generate professional email replies using Gemini Language Model API.
+A Spring Boot microservice for managing product inventory and checking stock status.
 
 ---
 
 ## Features
 
-* Accepts an email content and optional tone.
-* Sends prompt to Gemini API for generating reply content.
-* Returns generated email reply as a response.
+- REST API to check if a product SKU is in stock
+- Uses MySQL as the database
+- JPA-based persistence
+- Testcontainers for integration testing
 
 ---
 
 ## Technologies Used
 
-* Java 17+
-* Spring Boot
-* Spring WebFlux (WebClient)
-* Lombok
-* Jackson (JSON processing)
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- MySQL
+- Lombok
+- Testcontainers
+- JUnit
 
 ---
 
@@ -28,92 +31,53 @@ A Spring Boot backend service to generate professional email replies using Gemin
 
 ```bash
 git clone <repo-url>
-cd <repo-root>
+cd inventory-service
 ```
 
----
+### 2. Configure Database
 
-### 2. Configure API Key
-
-The app uses Google Gemini Language Model API. You need to provide your API key securely.
-
-#### Option 1: Use `secrets.properties` (recommended)
-
-Create a file named `secrets.properties` inside `src/main/resources` with the content:
+Update `src/main/resources/application.properties` and `secrets.properties` with your MySQL credentials:
 
 ```properties
-API_KEY=YOUR_ACTUAL_API_KEY_HERE
+spring.datasource.url=jdbc:mysql://localhost:3306/inventory_service
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
 ```
 
-The main `application.properties` already imports this file optionally:
+Example `secrets.properties`:
 
 ```properties
-spring.config.import=optional:classpath:secrets.properties
+DB_USERNAME=root
+DB_PASSWORD=yourpassword
 ```
 
-So, the placeholder `${API_KEY}` in
+### 3. Build and Run
 
-```properties
-gemini.api.key=${API_KEY}
-```
-
-will be replaced at runtime.
-
----
-
-#### Option 2: Set environment variable (alternative)
-
-Set the environment variable `API_KEY` before running the app:
-
-```bash
-export API_KEY=YOUR_ACTUAL_API_KEY_HERE   # Linux/Mac
-set API_KEY=YOUR_ACTUAL_API_KEY_HERE      # Windows CMD
-```
-
-Make sure to update `application.properties` to:
-
-```properties
-gemini.api.key=${API_KEY}
-```
-
----
-
-### 3. Build and run the app
-
-Using Maven:
+Using Maven Wrapper:
 
 ```bash
 ./mvnw clean package
-java -jar target/your-app-name.jar
+java -jar target/inventory_service-0.0.1-SNAPSHOT.jar
 ```
 
-Or run from your IDE directly.
+Or run directly from your IDE.
 
 ---
 
-### 4. API Usage
+## API Usage
 
-Send a POST request to:
+### Check if SKU is in stock
+
+**Endpoint:**
 
 ```
-POST /api/email/generate
-Content-Type: application/json
+GET /api/inventory/{sku-code}
 ```
 
-Sample request body:
+**Response:**
 
-```json
-{
-  "emailContent": "Hi team, can you please provide the status update?",
-  "tone": "friendly"
-}
-```
-
-Sample response:
-
-```json
-"Hi, thanks for reaching out! The status update is as follows..."
-```
+- `true` if SKU exists in inventory
+- `false` otherwise
 
 ---
 
@@ -122,19 +86,32 @@ Sample response:
 ```
 src/
 ├─ main/
-│  ├─ java/lk/email/assistant/
-│  │  ├─ controller/EmailGenerator.java
-│  │  ├─ service/GenerateEmailService.java
-│  │  └─ entity/EmailRequest.java
+│  ├─ java/com/ishara/inventory_service/
+│  │  ├─ controller/InventoryController.java
+│  │  ├─ service/InventoryService.java
+│  │  ├─ repository/InventoryRepository.java
+│  │  └─ model/Inventory.java
 │  └─ resources/
 │     ├─ application.properties
-│     └─ secrets.properties (not committed, for API key)
+│     └─ secrets.properties
+├─ test/
+│  └─ java/com/ishara/inventory_service/InventoryServiceApplicationTests.java
+```
+
+---
+
+## Testing
+
+Integration tests use Testcontainers to spin up a MySQL instance automatically.
+
+Run tests with:
+
+```bash
+./mvnw test
 ```
 
 ---
 
 ## Notes
 
-* Make sure to keep `secrets.properties` **out of version control** for security.
-* You can enhance this service by adding authentication, validation, or logging.
-
+- Keep `secrets.properties` out of version control for security.

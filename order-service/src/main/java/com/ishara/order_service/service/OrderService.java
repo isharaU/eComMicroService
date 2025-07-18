@@ -48,8 +48,8 @@ public class OrderService {
 
         boolean allProductsInStock;
 
-        if (inventoryResponseArray == null) {
-            log.error("\"Inventory Response array is Null");
+        if (inventoryResponseArray == null || inventoryResponseArray.length == 0) {
+            log.error("Inventory Response array is Empty or Null");
             throw new IllegalArgumentException("Inventory Response array is Null");
         } else {
             allProductsInStock = Arrays.stream(inventoryResponseArray).

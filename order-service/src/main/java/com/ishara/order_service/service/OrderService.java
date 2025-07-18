@@ -44,8 +44,15 @@ public class OrderService {
                 .bodyToMono(InventoryResponse[].class)
                 .block();
 
-        boolean allProductsInStock = Arrays.stream(inventoryResponseArray).
-                allMatch(InventoryResponse::isInStock);
+        boolean allProductsInStock;
+
+        if (inventoryResponseArray == null) {
+            throw new IllegalArgumentException("Inventory Response array is Null");
+        } else {
+            allProductsInStock = Arrays.stream(inventoryResponseArray).
+                    allMatch(InventoryResponse::isInStock);
+        }
+
 
         if (allProductsInStock) {
             orderRepository.save(order);

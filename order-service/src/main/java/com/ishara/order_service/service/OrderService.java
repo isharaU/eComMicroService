@@ -7,6 +7,7 @@ import com.ishara.order_service.model.Order;
 import com.ishara.order_service.model.OrderLineItems;
 import com.ishara.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -47,6 +49,7 @@ public class OrderService {
         boolean allProductsInStock;
 
         if (inventoryResponseArray == null) {
+            log.error("\"Inventory Response array is Null");
             throw new IllegalArgumentException("Inventory Response array is Null");
         } else {
             allProductsInStock = Arrays.stream(inventoryResponseArray).
@@ -57,10 +60,9 @@ public class OrderService {
         if (allProductsInStock) {
             orderRepository.save(order);
         } else {
+            log.error("Product is not in the Inventory");
             throw new IllegalArgumentException("Product is not in the Inventory");
         }
-
-
     }
 
     private OrderLineItems mapToDto(OrderLineItemDto orderLineItemDto) {

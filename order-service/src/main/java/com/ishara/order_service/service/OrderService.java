@@ -1,5 +1,6 @@
 package com.ishara.order_service.service;
 
+import com.ishara.order_service.dto.InventoryResponse;
 import com.ishara.order_service.dto.OrderLineItemDto;
 import com.ishara.order_service.dto.OrderRequest;
 import com.ishara.order_service.model.Order;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,13 +32,22 @@ public class OrderService {
 
         order.setOrderLineItemsList(orderLineItems);
 
-        Boolean productIsInStock = webClient.get()
-                .uri("http://localhost:8082/api/inventory")
+        List<String> skuCodes = order.getOrderLineItemsList().stream().
+                map(OrderLineItems::getSkuCode).
+                toList();
+
+        InventoryResponse[] inventoryResponseArray = webClient.get()
+                .uri("http://localhost:8082/api/inventory",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes)
+                                .build())
                 .retrieve()
-                .bodyToMono(Boolean.class)
+                .bodyToMono(InventoryResponse[].class)
                 .block();
 
-        if (Boolean.TRUE.equals(productIsInStock)) {
+        boolean allProductsInStock = Arrays.stream(inventoryResponseArray).
+                allMatch(InventoryResponse::isInStock);
+
+        if (allProductsInStock) {
             orderRepository.save(order);
         } else {
             throw new IllegalArgumentException("Product is not in the Inventory");

@@ -15,13 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     public void placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
@@ -34,28 +34,23 @@ public class OrderService {
 
         order.setOrderLineItemsList(orderLineItems);
 
-        List<String> skuCodes = order.getOrderLineItemsList().stream().
-                map(OrderLineItems::getSkuCode).
-                toList();
+        List<String> skuCodes = order.getOrderLineItemsList()
+                .stream()
+                .map(OrderLineItems::getSkuCode)
+                .toList();
 
-        InventoryResponse[] inventoryResponseArray = webClient.get()
-                .uri("http://localhost:8082/api/inventory",
+        InventoryResponse[] inventoryResponseArray = webClientBuilder.build()
+                .get()
+                .uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes)
                                 .build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
+        log.info("Inventory response: {}", Arrays.toString(inventoryResponseArray));
 
-        boolean allProductsInStock;
-
-        if (inventoryResponseArray == null || inventoryResponseArray.length == 0) {
-            log.error("Inventory Response array is Empty or Null");
-            throw new IllegalArgumentException("Inventory Response array is Null");
-        } else {
-            allProductsInStock = Arrays.stream(inventoryResponseArray).
-                    allMatch(InventoryResponse::isInStock);
-        }
-
+        boolean allProductsInStock = inventoryResponseArray != null &&
+                Arrays.stream(inventoryResponseArray).allMatch(InventoryResponse::isInStock);
 
         if (allProductsInStock) {
             orderRepository.save(order);
@@ -65,11 +60,12 @@ public class OrderService {
         }
     }
 
-    private OrderLineItems mapToDto(OrderLineItemDto orderLineItemDto) {
-        OrderLineItems orderLineItems = new OrderLineItems();
-        orderLineItems.setPrice(orderLineItemDto.getPrice());
-        orderLineItems.setQuantity(orderLineItemDto.getQuantity());
-        orderLineItems.setSkuCode(orderLineItemDto.getSkuCode());
-        return orderLineItems;
+    private OrderLineItems mapToDto(OrderLineItemDto dto) {
+        OrderLineItems item = new OrderLineItems();
+        item.setPrice(dto.getPrice());
+        item.setQuantity(dto.getQuantity());
+        item.setSkuCode(dto.getSkuCode());
+        return item;
     }
 }
+

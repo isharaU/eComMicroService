@@ -26,7 +26,7 @@ public class OrderService {
     private final WebClient.Builder webClientBuilder;
 
     @CircuitBreaker(name = "inventory", fallbackMethod = "fallbackMethod")
-    public void placeOrder(OrderRequest orderRequest) {
+    public String placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
 
@@ -60,16 +60,17 @@ public class OrderService {
 
         if (allProductsInStock) {
             orderRepository.save(order);
-            log.info("Order placed successfully: {}", order.getOrderNumber());
+            return "Order placed successfully: " + order.getOrderNumber();
         } else {
             log.error("Product is not in the Inventory for order: {}", order.getOrderNumber());
             throw new IllegalArgumentException("Product is not in the Inventory, please try again later");
         }
     }
 
-    public void fallbackMethod(OrderRequest orderRequest, Exception exception) {
+    public String fallbackMethod(OrderRequest orderRequest, Exception exception) {
         log.error("Circuit breaker activated for inventory service. Order request: {}, Error: {}",
                 orderRequest.toString(), exception.getMessage());
+        return "Can't communicate with Inventory";
     }
 
     private OrderLineItems mapToDto(OrderLineItemDto dto) {
